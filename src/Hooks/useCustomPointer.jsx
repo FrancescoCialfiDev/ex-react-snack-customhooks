@@ -3,19 +3,41 @@
 //
 // Cosa deve fare ?
 //
-//     Prende in input una stringa o un JSX component(es.un’emoji, un'icona, un'animazione).
+// Prende in input una stringa o un JSX component(es.un’emoji, un'icona, un'animazione).
 // Posiziona il componente al posto del puntatore del mouse.
 // Il componente segue i movimenti del mouse.
 // Esempio di utilizzo:
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-function useCustomPointer(emojiArr) {
+function useCustomPointer(emoji) {
+
+    const [position, setPosition] = useState({ x: 0, y: 0 })
+
     useEffect(() => {
-        document.body.style.cursor = `url(${emojiArr}), auto`;
+        const handleMouseMove = event => {
+            setPosition({ x: event.clientX, y: event.clientY })
+        }
+        document.addEventListener("mousemove", handleMouseMove)
 
-        return () => { document.body.style.cursor = `default`; }
-    }, [emojiArr])
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove)
+        }
+    }, [])
+
+    return (
+        <div
+            style={{
+                position: "fixed",
+                top: position.y,
+                left: position.x,
+                transform: "translate(-50%,-50%)",
+                cursor: "none"
+            }}
+        >
+            {emoji}
+        </div>
+    )
 
 }
 
